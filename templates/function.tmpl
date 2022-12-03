@@ -1,3 +1,6 @@
+{{/* Modified by Artefactual Systems Inc. 2022. The original is: */}}
+{{/* https://github.com/cweill/gotests/blob/v1.6.0/internal/render/templates/function.tmpl */}}
+
 {{define "function"}}
 {{- $f := .}}
 
@@ -74,14 +77,15 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 			{{- range .TestResults}}
 				{{- if .IsWriter}}
-					if {{Got .}} := {{Param .}}.String(); {{Got .}} != tt.{{Want .}} {
+					{{Got .}} := {{Param .}}.String();
+					assert.Equal(t, {{Got .}}, tt.{{Want .}})
 				{{- else if .IsBasicType}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != tt.{{Want .}} {
+					{{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}{{end}}
+					assert.Equal(t, {{Got .}}, tt.{{Want .}})
 				{{- else}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !reflect.DeepEqual({{Got .}}, tt.{{Want .}}) {
+					{{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}{{end}}
+					assert.DeepEqual(t, {{Got .}}, tt.{{Want .}})
 				{{- end}}
-				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
-				}
 			{{- end}}
 		{{- if .Subtests }} }) {{- end -}}
 	}
