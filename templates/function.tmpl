@@ -77,7 +77,7 @@ func {{.TestName}}(t *testing.T) {
 			{{- end}}
 			{{- range .TestResults}}
 				{{- if .IsWriter}}
-					{{Got .}} := {{Param .}}.String();
+					{{Got .}} := {{Param .}}.String()
 					assert.Equal(t, {{Got .}}, tt.{{Want .}})
 				{{- else if .IsBasicType}}
 					{{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}{{end}}
